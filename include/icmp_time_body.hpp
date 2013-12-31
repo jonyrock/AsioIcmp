@@ -62,7 +62,7 @@ public:
     }
 
     friend std::istream& operator>>(std::istream& is, icmp_time_body& body) {
-        return is.read(body.begin(), body.size());
+        return is.read(reinterpret_cast<char*>(body.begin()), body.size());
     }
 
     friend std::ostream& operator<<(std::ostream& os, const icmp_time_body& body) {

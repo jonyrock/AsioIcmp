@@ -1,7 +1,12 @@
 *** TODO ***
-* basic boost asio tests
+* read buffer bug
+* date output nice
 
 *** DONE ***
-
-*** LINKS ***
-http://en.highscore.de/cpp/boost/asio.html
+* synchronous mode for client
+* get timestamp `date +%s`
+* date output basic
+* handle timeout
+* Exception: send_to: Invalid argument
+* fix checksum
+* basic boost asio tests

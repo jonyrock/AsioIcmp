@@ -40,25 +40,22 @@ private:
         icmp_time_body body;
 
         body.originateTime(otime);
-        body.reciveTime(12);
-        body.transmitTime(13);
-        
-        cout << body.originateTime() << endl;
-        cout << body.reciveTime() << endl;
-        cout << body.transmitTime() << endl;
-        
-        cout << " -------- " << endl;
+        body.reciveTime(0);
+        body.transmitTime(0);
+
+        //        cout << body.originateTime() << endl;
+        //        cout << body.reciveTime() << endl;
+        //        cout << body.transmitTime() << endl;
+        //        
+        //        cout << " -------- " << endl;
 
         compute_checksum(timestamp_request, body.begin(), body.end());
 
         return body;
 
-
     }
 
     void send() {
-
-        success = false;
 
         icmp_header timestamp_request;
         timestamp_request.type(icmp_header::timestamp_request);
@@ -68,10 +65,13 @@ private:
 
         icmp_time_body body = add_time_body(timestamp_request);
 
-
         // Encode the request packet.
         boost::asio::streambuf request_buffer;
         std::ostream os(&request_buffer);
+        
+        cout << body.originateTime() << endl;
+        cout << "--------" << endl;
+        
         os << timestamp_request << body;
 
 
@@ -79,24 +79,13 @@ private:
         time_sent_ = posix_time::microsec_clock::universal_time();
 
         socket_.send_to(request_buffer.data(), destination_);
-
-        // Wait up to five seconds for a reply.
-        timer_.expires_at(time_sent_ + posix_time::seconds(3));
-        timer_.async_wait(boost::bind(&DateRequester::handle_timeout, this));
-
+        
     }
 
-    void handle_timeout() {
-        if (!success) {
-            cout << "3 seconds timeout." << endl;
-            exit(1);
-        }
-    }
 
     void receive() {
-        
+
         socket_.receive(reply_buffer_.prepare(54));
-        
         reply_buffer_.commit(54);
 
         std::istream is(&reply_buffer_);
@@ -107,7 +96,6 @@ private:
 
         if (is && icmp_hdr.type() == icmp_header::timestamp_reply
                 && icmp_hdr.identifier() == get_identifier()) {
-            posix_time::ptime now = posix_time::microsec_clock::universal_time();
             cout << icmp_body.originateTime() << endl;
             cout << icmp_body.reciveTime() << endl;
             cout << icmp_body.transmitTime() << endl;
@@ -125,7 +113,7 @@ private:
     deadline_timer timer_;
     posix_time::ptime time_sent_;
     boost::asio::streambuf reply_buffer_;
-    bool success;
+    
 };
 
 int main(int argc, char* argv[]) {
