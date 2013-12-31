@@ -5,8 +5,9 @@
 #include <iostream>
 #include <ostream>
 
-#include "icmp_header.hpp"
 #include "ipv4_header.hpp"
+#include "icmp_header.hpp"
+#include "icmp_time_body.hpp"
 
 using boost::asio::ip::icmp;
 // using namepsace boost::posix_time;
@@ -21,7 +22,6 @@ uint32_t currentTimestamp() {
     return seconds;
 }
 
-typedef unsigned char uchar;
 
 class DateRequester {
 public:
@@ -35,52 +35,22 @@ public:
     }
 
 private:
-    
-    vector<uchar> add_times(icmp_header& timestamp_request){
-        
-        vector<uchar> body;
-        
-        union {
-            uint32_t originateTime;
-            uchar originateTimeB[4];
-        };
-        
-        union {
-            uint32_t reciveTime;
-            uchar reciveTimeB[4];
-        };
-        
-        union {
-            uint32_t transmitTime;
-            uchar transmitTimeB[4];
-        };
-        
-        originateTime = 9999;
-        reciveTime = 9999;
-        transmitTime = 12312;
-        
-        body.push_back(originateTimeB[0]); 
-        body.push_back(originateTimeB[1]); 
-        body.push_back(originateTimeB[2]); 
-        body.push_back(originateTimeB[3]); 
-        
-        body.push_back(reciveTimeB[0]); 
-        body.push_back(reciveTimeB[1]); 
-        body.push_back(reciveTimeB[2]); 
-        body.push_back(reciveTimeB[3]); 
-        
-        body.push_back(transmitTimeB[0]); 
-        body.push_back(transmitTimeB[1]); 
-        body.push_back(transmitTimeB[2]); 
-        body.push_back(transmitTimeB[3]); 
+
+    icmp_time_body add_times(icmp_header& timestamp_request) {
+
+        icmp_time_body body;
+
+        body.originateTime(9999);
+        body.reciveTime(0);
+        body.transmitTime(0);
 
         compute_checksum(timestamp_request, body.begin(), body.end());
-        
+
         return body;
-        
-        
+
+
     }
-    
+
     void start_send() {
 
         icmp_header timestamp_request;
@@ -88,17 +58,15 @@ private:
         timestamp_request.code(0);
         timestamp_request.identifier(get_identifier());
         timestamp_request.sequence_number(0);
-        
-        vector<uchar> body = add_times(timestamp_request);
-        
+
+        icmp_time_body body = add_times(timestamp_request);
+
 
         // Encode the request packet.
         boost::asio::streambuf request_buffer;
         std::ostream os(&request_buffer);
-        os << timestamp_request;
-        for(int i = 0; i < body.size(); i++)
-            os << body[i];
-        
+        os << timestamp_request << body;
+
 
         // Send the request.
         time_sent_ = posix_time::microsec_clock::universal_time();
@@ -148,15 +116,10 @@ private:
         if (is && icmp_hdr.type() == icmp_header::timestamp_reply
                 && icmp_hdr.identifier() == get_identifier()) {
             // If this is the first reply, interrupt the five second timeout.
-
             // Print out some information about the reply packet.
             posix_time::ptime now = posix_time::microsec_clock::universal_time();
-
             cout << "got something" << endl;
-
         }
-
-        start_receive();
     }
 
     static inline unsigned short get_identifier() {

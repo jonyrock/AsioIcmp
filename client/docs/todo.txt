@@ -1,9 +1,11 @@
 *** TODO ***
-* handle timeout
-* synchronous mode for client
-* fix checksum
-* Exception: send_to: Invalid argument
 * get timestamp `date +%s`
+* synchronous mode for client
+* date output
+
 
 *** DONE ***
+* handle timeout
+* Exception: send_to: Invalid argument
+* fix checksum
 * basic boost asio tests
