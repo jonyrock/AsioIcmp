@@ -1,10 +1,9 @@
 *** TODO ***
-* synchronous mode for client
+* read buffer bug
 * date output nice
-* receive and top
-
 
 *** DONE ***
+* synchronous mode for client
 * get timestamp `date +%s`
 * date output basic
 * handle timeout

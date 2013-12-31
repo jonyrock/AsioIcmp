@@ -10,7 +10,6 @@
 #include "icmp_time_body.hpp"
 
 using boost::asio::ip::icmp;
-// using namepsace boost::posix_time;
 using boost::asio::deadline_timer;
 
 using namespace std;
@@ -24,8 +23,8 @@ public:
     resolver_(io_service), socket_(io_service, icmp::v4()), timer_(io_service) {
         icmp::resolver::query query(icmp::v4(), destination, "");
         destination_ = *resolver_.resolve(query);
-        start_send();
-        start_receive();
+        send();
+        receive();
     }
 
 private:
@@ -51,7 +50,9 @@ private:
 
     }
 
-    void start_send() {
+    void send() {
+
+        success = false;
 
         icmp_header timestamp_request;
         timestamp_request.type(icmp_header::timestamp_request);
@@ -71,7 +72,6 @@ private:
         // Send the request.
         time_sent_ = posix_time::microsec_clock::universal_time();
 
-
         socket_.send_to(request_buffer.data(), destination_);
 
         // Wait up to five seconds for a reply.
@@ -81,42 +81,26 @@ private:
     }
 
     void handle_timeout() {
-        cout << "TIMEOOUT" << endl;
-        exit(1);
-        // Requests must be sent no less than one second apart.
-        timer_.expires_at(time_sent_ + posix_time::seconds(1));
-        timer_.async_wait(boost::bind(&DateRequester::start_send, this));
+        if (!success) {
+            cout << "3 seconds timeout." << endl;
+            exit(1);
+        }
     }
 
-    void start_receive() {
-        cout << "start_receive" << endl;
-        // Discard any data already in the buffer.
-        reply_buffer_.consume(reply_buffer_.size());
+    void receive() {
+        
+        socket_.receive(reply_buffer_.prepare(54));
+        
+        reply_buffer_.commit(54);
 
-        // Wait for a reply. We prepare the buffer to receive up to 64KB.
-        socket_.async_receive(reply_buffer_.prepare(65536),
-                boost::bind(&DateRequester::handle_receive, this, _2));
-    }
-
-    void handle_receive(std::size_t length) {
-        // The actual number of bytes received is committed to the buffer so that we
-        // can extract it using a std::istream object.
-        reply_buffer_.commit(length);
-
-        // Decode the reply packet.
         std::istream is(&reply_buffer_);
         ipv4_header ipv4_hdr;
         icmp_header icmp_hdr;
         icmp_time_body icmp_body;
         is >> ipv4_hdr >> icmp_hdr >> icmp_body;
 
-        // We can receive all ICMP packets received by the host, so we need to
-        // filter out only the echo replies that match the our identifier and
-        // expected sequence number.
         if (is && icmp_hdr.type() == icmp_header::timestamp_reply
                 && icmp_hdr.identifier() == get_identifier()) {
-            // If this is the first reply, interrupt the five second timeout.
-            // Print out some information about the reply packet.
             posix_time::ptime now = posix_time::microsec_clock::universal_time();
             cout << icmp_body.originateTime() << endl;
             cout << icmp_body.reciveTime() << endl;
@@ -135,6 +119,7 @@ private:
     deadline_timer timer_;
     posix_time::ptime time_sent_;
     boost::asio::streambuf reply_buffer_;
+    bool success;
 };
 
 int main(int argc, char* argv[]) {
