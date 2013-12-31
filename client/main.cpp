@@ -5,9 +5,9 @@
 #include <iostream>
 #include <ostream>
 
-#include "ipv4_header.hpp"
-#include "icmp_header.hpp"
-#include "icmp_time_body.hpp"
+#include "../include/ipv4_header.hpp"
+#include "../include/icmp_header.hpp"
+#include "../include/icmp_time_body.hpp"
 
 using boost::asio::ip::icmp;
 using boost::asio::deadline_timer;
@@ -40,8 +40,14 @@ private:
         icmp_time_body body;
 
         body.originateTime(otime);
-        body.reciveTime(0);
-        body.transmitTime(0);
+        body.reciveTime(12);
+        body.transmitTime(13);
+        
+        cout << body.originateTime() << endl;
+        cout << body.reciveTime() << endl;
+        cout << body.transmitTime() << endl;
+        
+        cout << " -------- " << endl;
 
         compute_checksum(timestamp_request, body.begin(), body.end());
 
