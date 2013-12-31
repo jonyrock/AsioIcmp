@@ -17,12 +17,6 @@ using namespace std;
 
 namespace posix_time = boost::posix_time;
 
-uint32_t currentTimestamp() {
-    uint32_t seconds = time(NULL);
-    return seconds;
-}
-
-
 class DateRequester {
 public:
 
@@ -36,11 +30,17 @@ public:
 
 private:
 
-    icmp_time_body add_times(icmp_header& timestamp_request) {
+    icmp_time_body add_time_body(icmp_header& timestamp_request) {
+
+        timeval tim;
+        gettimeofday(&tim, NULL);
+
+        uint32_t otime = (tim.tv_sec % (24 * 60 * 60)) * 1000
+                + tim.tv_usec / 1000;
 
         icmp_time_body body;
 
-        body.originateTime(9999);
+        body.originateTime(otime);
         body.reciveTime(0);
         body.transmitTime(0);
 
@@ -59,7 +59,7 @@ private:
         timestamp_request.identifier(get_identifier());
         timestamp_request.sequence_number(0);
 
-        icmp_time_body body = add_times(timestamp_request);
+        icmp_time_body body = add_time_body(timestamp_request);
 
 
         // Encode the request packet.
@@ -99,7 +99,6 @@ private:
     }
 
     void handle_receive(std::size_t length) {
-        cout << "handle receive" << endl;
         // The actual number of bytes received is committed to the buffer so that we
         // can extract it using a std::istream object.
         reply_buffer_.commit(length);
@@ -108,7 +107,8 @@ private:
         std::istream is(&reply_buffer_);
         ipv4_header ipv4_hdr;
         icmp_header icmp_hdr;
-        is >> ipv4_hdr >> icmp_hdr;
+        icmp_time_body icmp_body;
+        is >> ipv4_hdr >> icmp_hdr >> icmp_body;
 
         // We can receive all ICMP packets received by the host, so we need to
         // filter out only the echo replies that match the our identifier and
@@ -118,8 +118,11 @@ private:
             // If this is the first reply, interrupt the five second timeout.
             // Print out some information about the reply packet.
             posix_time::ptime now = posix_time::microsec_clock::universal_time();
-            cout << "got something" << endl;
+            cout << icmp_body.originateTime() << endl;
+            cout << icmp_body.reciveTime() << endl;
+            cout << icmp_body.transmitTime() << endl;
         }
+        exit(0);
     }
 
     static inline unsigned short get_identifier() {
