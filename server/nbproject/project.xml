@@ -3,13 +3,17 @@
     <type>org.netbeans.modules.cnd.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>Icmp</name>
+            <name>IcmpServer</name>
             <c-extensions/>
             <cpp-extensions>cpp</cpp-extensions>
-            <header-extensions/>
+            <header-extensions>hpp</header-extensions>
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
-            <sourceRootList/>
+            <sourceRootList>
+                <sourceRootElem>docs</sourceRootElem>
+                <sourceRootElem>/home/alex/Aptu/NT/Icmp/include</sourceRootElem>
+                <sourceRootElem>/home/alex/Aptu/NT/Icmp/docs</sourceRootElem>
+            </sourceRootList>
             <confList>
                 <confElem>
                     <name>Debug</name>

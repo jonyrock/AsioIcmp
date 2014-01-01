@@ -1,9 +1,0 @@
-nbproject/*
-*.o
-*.gch
-*.swp
-Makefile
-triHolesLog
-
-/Default
-/bin
