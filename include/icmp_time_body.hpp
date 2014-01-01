@@ -8,6 +8,10 @@
 #ifndef ICMP_TIME_BODY_HPP
 #define	ICMP_TIME_BODY_HPP
 
+#include "netinet/in.h"
+
+using namespace std;
+
 class icmp_time_body {
 
     union {
@@ -16,6 +20,18 @@ class icmp_time_body {
     };
 
 public:
+    
+    void convert_to_network() {
+        timee[0] = htonl(timee[0]);
+        timee[1] = htonl(timee[1]);
+        timee[2] = htonl(timee[2]);
+    }
+    
+    void convert_from_network() {
+        timee[0] = ntohl(timee[0]);
+        timee[1] = ntohl(timee[1]);
+        timee[2] = ntohl(timee[2]);
+    }
 
     uint32_t originateTime() const {
         return timee[0];
@@ -62,7 +78,7 @@ public:
     }
 
     friend std::istream& operator>>(std::istream& is, icmp_time_body& body) {
-        return is.read(reinterpret_cast<char*>(body.begin()), body.size());
+        return is.read(reinterpret_cast<char*> (body.begin()), body.size());
     }
 
     friend std::ostream& operator<<(std::ostream& os, const icmp_time_body& body) {

@@ -26,9 +26,9 @@ public:
     }
 
     void process_all() {
-//        while (1) {
+        while (1) {
             process_once();
-//        }
+        }
     }
 
     void add_time_body(icmp_time_body& body) {
@@ -73,10 +73,12 @@ public:
         
         cout << "send " << ipv4_hdr.source_address() << endl;
         
-        icmp::endpoint destination(ipv4_hdr.source_address(), 0);
+        stringstream ss;
+        ss << ipv4_hdr.source_address();
+        icmp::endpoint destination;
         
-//        icmp::resolver::query query(icmp::v4(), "mail.ru", "");
-//        destination = *resolver_.resolve(query);
+        icmp::resolver::query query(icmp::v4(), ss.str(), "");
+        destination = *resolver_.resolve(query);
         
         socket_.send_to(request_buffer.data(), destination);
 
