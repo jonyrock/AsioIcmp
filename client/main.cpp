@@ -5,6 +5,10 @@
 #include <iostream>
 #include <ostream>
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/posix_time/posix_time_io.hpp>
+
 #include "../include/ipv4_header.hpp"
 #include "../include/icmp_header.hpp"
 #include "../include/icmp_time_body.hpp"
@@ -12,9 +16,24 @@
 using boost::asio::ip::icmp;
 using boost::asio::deadline_timer;
 
+using namespace boost::posix_time;
+using namespace std;
+
+
 using namespace std;
 
 namespace posix_time = boost::posix_time;
+
+string get_formated_time(uint32_t timestamb) {
+    int milsec = timestamb % 1000;
+    int sec = timestamb / 1000 % 60;
+    int minutes = (timestamb / (1000 * 60)) % 60;
+    int hours = (timestamb / (1000 * 60 * 60));
+    
+    stringstream ss;
+    ss << hours << ":" << minutes << ":" << sec << "." << milsec;
+    return ss.str();
+}
 
 class DateRequester {
 public:
@@ -49,7 +68,6 @@ private:
         //        
         //        cout << " -------- " << endl;
 
-        compute_checksum(timestamp_request, body.begin(), body.end());
 
         return body;
 
@@ -64,24 +82,20 @@ private:
         timestamp_request.sequence_number(0);
 
         icmp_time_body body = add_time_body(timestamp_request);
+        compute_checksum(timestamp_request, body.begin(), body.end());
 
         // Encode the request packet.
         boost::asio::streambuf request_buffer;
         std::ostream os(&request_buffer);
-        
-        cout << body.originateTime() << endl;
-        cout << "--------" << endl;
-        
+
+//        cout << body.originateTime() << endl;
+//        cout << "--------" << endl;
+
         os << timestamp_request << body;
 
-
-        // Send the request.
-        time_sent_ = posix_time::microsec_clock::universal_time();
-
         socket_.send_to(request_buffer.data(), destination_);
-        
-    }
 
+    }
 
     void receive() {
 
@@ -94,11 +108,17 @@ private:
         icmp_time_body icmp_body;
         is >> ipv4_hdr >> icmp_hdr >> icmp_body;
 
+        cout << "receive type:" << (int) icmp_hdr.type() << endl;
+
+        //        time_facet *facet = new time_facet("%d-%b-%Y %H:%M:%S");
+
         if (is && icmp_hdr.type() == icmp_header::timestamp_reply
                 && icmp_hdr.identifier() == get_identifier()) {
-            cout << icmp_body.originateTime() << endl;
-            cout << icmp_body.reciveTime() << endl;
-            cout << icmp_body.transmitTime() << endl;
+            cout << "originate:" << get_formated_time(icmp_body.originateTime()) << endl;
+            cout << "receive: " << get_formated_time(icmp_body.reciveTime()) << endl;
+            cout << "transmit: " << get_formated_time(icmp_body.transmitTime()) << endl;
+        } else {
+            receive();
         }
         exit(0);
     }
@@ -113,7 +133,7 @@ private:
     deadline_timer timer_;
     posix_time::ptime time_sent_;
     boost::asio::streambuf reply_buffer_;
-    
+
 };
 
 int main(int argc, char* argv[]) {

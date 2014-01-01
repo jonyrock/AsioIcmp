@@ -1,8 +1,8 @@
 *** TODO ***
 * read buffer bug
-* date output nice
 
 *** DONE ***
+* read buger nice
 * synchronous mode for client
 * get timestamp `date +%s`
 * date output basic
