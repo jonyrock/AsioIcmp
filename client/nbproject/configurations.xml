@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="88">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="docs" displayName="docs" projectFiles="true">
+      <itemPath>/home/alex/Aptu/NT/Icmp/docs/todo.txt</itemPath>
+    </logicalFolder>
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <logicalFolder name="include" displayName="include" projectFiles="true">
+        <itemPath>/home/alex/Aptu/NT/Icmp/include/icmp_header.hpp</itemPath>
+        <itemPath>/home/alex/Aptu/NT/Icmp/include/icmp_time_body.hpp</itemPath>
+        <itemPath>/home/alex/Aptu/NT/Icmp/include/ipv4_header.hpp</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>main.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>docs</Elem>
+    <Elem>/home/alex/Aptu/NT/Icmp/include</Elem>
+    <Elem>/home/alex/Aptu/NT/Icmp/docs</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+        <linkerTool>
+          <commandLine>-lboost_system -lpthread -lboost_thread</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="/home/alex/Aptu/NT/Icmp/docs/todo.txt"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/alex/Aptu/NT/Icmp/include/icmp_header.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/alex/Aptu/NT/Icmp/include/icmp_time_body.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/alex/Aptu/NT/Icmp/include/ipv4_header.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+      <item path="/home/alex/Aptu/NT/Icmp/docs/todo.txt"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/alex/Aptu/NT/Icmp/include/icmp_header.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/alex/Aptu/NT/Icmp/include/icmp_time_body.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/alex/Aptu/NT/Icmp/include/ipv4_header.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
