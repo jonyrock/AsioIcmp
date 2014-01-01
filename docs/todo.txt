@@ -1,7 +1,9 @@
 *** TODO ***
-* read buffer bug
+* proper server answer (clockdiff test)
+* test from my client 
 
 *** DONE ***
+* read buffer bug
 * read buger nice
 * synchronous mode for client
 * get timestamp `date +%s`

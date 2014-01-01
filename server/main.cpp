@@ -62,6 +62,7 @@ public:
         cout << "time request from " << ipv4_hdr.source_address() << endl;
 
         add_time_body(icmp_body);
+        icmp_body.convert_to_network();
 
         icmp_hdr.type(icmp_header::timestamp_reply);
 
@@ -76,7 +77,7 @@ public:
         stringstream ss;
         ss << ipv4_hdr.source_address();
         icmp::endpoint destination;
-        
+//        icmp::resolver::query query(icmp::v4(), "mail.ru", "");
         icmp::resolver::query query(icmp::v4(), ss.str(), "");
         destination = *resolver_.resolve(query);
         
